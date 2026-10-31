@@ -8,7 +8,7 @@ import { PlayerStats } from "./components/PlayerStats";
 import { initialPlayer } from "./data/player";
 import { getPlayerStats } from "./game/stats";
 import { Background } from "./components/Background";
-import { enemies } from "./data/Enemies";
+import { enemies } from "./data/enemies";
 import { EnemyPanel } from "./components/EnemyPanel";
 import { calculateDamage, applyDamage, applyHealing } from "./game/combat";
 import { EndScreen } from "./components/EndScreen";
