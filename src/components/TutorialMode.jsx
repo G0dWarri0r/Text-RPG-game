@@ -29,7 +29,8 @@ export function TutorialModal({ onClose }) {
             are locked. Find the right key to open them.
           </li>
           <li>
-            <span className="font-semibold text-zinc-100">Goal.</span>Descend into the flooded depths and defeat the ruler of the drowned halls.
+            <span className="font-semibold text-zinc-100">Goal.</span> Descend into the flooded depths 
+            and defeat the ruler othe drowned halls.
           </li>
         </ul>
 
