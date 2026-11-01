@@ -1,9 +1,25 @@
 import { items } from "../data/items";
 
-export function Inventory({ itemIds, onUse}) {
+export function Inventory({ itemIds, onUse, openHowToPlay, newGame }) {
     return (
         <section className="mt-6">
-            <h2 className="mb-2 text-sm uppercase tracking-wide text-zinc-400">
+            <div className="flex gap-4 self-start">
+                <button
+                    type="button"
+                    onClick={() => openHowToPlay(true)}
+                    className="text-sm text-amber-400 underline hover:text-amber-300"
+                >
+                    How to play
+                </button>
+                <button
+                    type="button"
+                    onClick={newGame}
+                    className="text-sm text-amber-400 underline hover:text-red-400"
+                >
+                    New game
+                </button>
+            </div >
+            <h2 className="mb-2 mt-4 text-sm uppercase tracking-wide text-zinc-400">
                 Inventory
             </h2>
 
@@ -25,6 +41,6 @@ export function Inventory({ itemIds, onUse}) {
                     </li>
                 ))}
             </ul>
-        </section>
+        </section >
     );
 }

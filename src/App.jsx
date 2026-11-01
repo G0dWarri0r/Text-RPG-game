@@ -17,7 +17,8 @@ import { CombatLog } from "./components/CombatLog";
 import { items } from "./data/items";
 import { isExitLocked } from "./game/doors";
 import { FINAL_ENEMY_ID, SEMIFINAL_ENEMY_ID } from "./game/rules";
-import { loadGame, saveGame } from "./game/storage";
+import { hasSeenTutorial, loadGame, markTutorialSeen, saveGame } from "./game/storage";
+import { TutorialModal } from "./components/TutorialMode";
 
 function App() {
 
@@ -30,6 +31,7 @@ function App() {
   const [combatLog, setCombatLog] = useState([]);
   const [isEnemyHit, setIsEnemyHit] = useState(false);
   const [usedItemIds, setusedItemIds] = useState(savedGame?.usedItemIds ?? []);
+  const [isTutorialOpen, setIsTutorialOpen] = useState(() => !hasSeenTutorial())
   const currentRoom = rooms[currentRoomId];
   const roomItemIds = currentRoom.itemIds.filter((id) => !inventory.includes(id));
   const heldItems = inventory.filter((id) => !usedItemIds.includes(id));
@@ -69,6 +71,7 @@ function App() {
     if (item === "rusty_sword") addLog("info", "Picked up rusty sword.");
     if (item === "wooden_shield") addLog("info", "Picked up wooden shield.");
     if (item === "health_potion") addLog("info", "Picked up potion.");
+    if (item === "old_key") addLog("info", "East gate has been unlocked!")
   }
 
   function handlePlayerAttack() {
@@ -124,6 +127,18 @@ function App() {
     }, 300)
   }
 
+  function handleSeenTutorial(value) {
+    setIsTutorialOpen(value);
+    markTutorialSeen();
+  }
+
+  function newGame() {
+    const confermation = window.confirm("Are you sure about this? It will reset your current progress!");
+    if (confermation) {
+      handleRestart()
+    }
+  }
+
   function handleRestart() {
     setCurrentRoomId("entrance");
     setVisitedRoomIds(["entrance"]);
@@ -142,6 +157,7 @@ function App() {
   return (
     <main className="min-h-screen p-6 text-zinc-100">
       <Background theme={currentRoomId} />
+      {isTutorialOpen && <TutorialModal onClose={handleSeenTutorial} />}
       <div className="mx-auto grid min-h-[calc(100vh-3rem)] max-w-5xl grid-cols-1 gap-6 md:grid-cols-[1fr_18rem]">
 
         <section className="flex flex-col items-center gap-6">
@@ -176,7 +192,7 @@ function App() {
 
         <aside className="flex flex-col gap-6">
           <MiniMap visitedRoomIds={visitedRoomIds} currentRoomId={currentRoomId} />
-          <Inventory itemIds={heldItems} onUse={handleUseItem} />
+          <Inventory itemIds={heldItems} onUse={handleUseItem} openHowToPlay={handleSeenTutorial} newGame={newGame} />
           <RoomItems itemIds={roomItemIds} onPickUp={handlePickUp} />
         </aside>
 

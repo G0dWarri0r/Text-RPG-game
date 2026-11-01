@@ -13,3 +13,13 @@ export function loadGame() {
     return null;
   }
 }
+
+const TUTORIAL_KEY = "dungeon-crawler-tutorial-seen";
+
+export function hasSeenTutorial() {
+  return localStorage.getItem(TUTORIAL_KEY) === "true";
+}
+
+export function markTutorialSeen() {
+  return localStorage.setItem(TUTORIAL_KEY, "true");
+}
