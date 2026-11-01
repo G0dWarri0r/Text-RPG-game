@@ -29,8 +29,7 @@ export function TutorialModal({ onClose }) {
             are locked. Find the right key to open them.
           </li>
           <li>
-            <span className="font-semibold text-zinc-100">Goal.</span> Reach the
-            treasury and defeat its guardian. Your progress saves automatically.
+            <span className="font-semibold text-zinc-100">Goal.</span>Descend into the flooded depths and defeat the ruler of the drowned halls.
           </li>
         </ul>
 

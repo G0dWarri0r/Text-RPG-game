@@ -15,8 +15,9 @@ import { EndScreen } from "./components/EndScreen";
 import { getEnemyDefeatedMessage, getEnemyHitMessage, getPlayerDiedMessage, getPlayerHitMessage } from "./game/messages";
 import { CombatLog } from "./components/CombatLog";
 import { items } from "./data/items";
+import { Compass } from "./components/Compass";
 import { isExitLocked } from "./game/doors";
-import { FINAL_ENEMY_ID, SEMIFINAL_ENEMY_ID } from "./game/rules";
+import { FINAL_ENEMY_ID, IDLE_ATTACK_MS } from "./game/rules";
 import { hasSeenTutorial, loadGame, markTutorialSeen, saveGame } from "./game/storage";
 import { TutorialModal } from "./components/TutorialMode";
 
@@ -30,11 +31,14 @@ function App() {
   const [playerHealth, setPlayerHealth] = useState(savedGame?.playerHealth ?? initialPlayer.maxHealth);
   const [combatLog, setCombatLog] = useState([]);
   const [isEnemyHit, setIsEnemyHit] = useState(false);
+  const [isPlayerHit, setIsPLayerHit] = useState(false);
   const [usedItemIds, setusedItemIds] = useState(savedGame?.usedItemIds ?? []);
   const [isTutorialOpen, setIsTutorialOpen] = useState(() => !hasSeenTutorial())
+  const [hitPlayer, setHitPlayer] = useState(false);
   const currentRoom = rooms[currentRoomId];
   const roomItemIds = currentRoom.itemIds.filter((id) => !inventory.includes(id));
   const heldItems = inventory.filter((id) => !usedItemIds.includes(id));
+  const availableDirections = Object.keys(currentRoom.exits);
   const { name, maxHealth } = initialPlayer;
   const { attack, defense } = getPlayerStats(inventory);
   const enemy = currentRoom.enemyId ? enemies[currentRoom.enemyId] : null;
@@ -49,29 +53,47 @@ function App() {
     saveGame({ currentRoomId, visitedRoomIds, inventory, playerHealth, enemyHealths, usedItemIds })
   }, [currentRoomId, visitedRoomIds, inventory, playerHealth, enemyHealths, usedItemIds])
 
+  useEffect(() => {
+    if (!enemy || isEnemyDefeated || isGameOver || isTutorialOpen) return;
+
+    const timerId = setTimeout(() => {
+      addLog("info", `You are vulnerable, the ${enemy.name} attacked!`);
+      handleEnemyAttack();
+    }, IDLE_ATTACK_MS);
+
+    return () => clearTimeout(timerId);
+  }, [currentRoomId, enemyHealth, playerHealth, inventory, usedItemIds, isTutorialOpen]);
+
   function handleMove(roomId, direction) {
     if (isGameOver) return;
+    const nextRoom = rooms[roomId];
+    if (nextRoom.floor !== currentRoom.floor) {
+      addLog("info", `You ${direction === "down" ? "descended" : "ascended"} to floor ${nextRoom.floor}`);
+    }
+
     const keyName = items[currentRoom.locks[direction]]?.name;
     if (keyName) {
       if (isExitLocked(currentRoom, direction, heldItems)) {
-        addLog("info", `The door is locked. You need the ${keyName}.`);
+        addLog("items", `The door is locked. You need the ${keyName}.`);
         return;
       }
+    }
+
+    const nextEnemy = enemies[nextRoom.enemyId]
+    if (nextEnemy && enemyHealths[nextEnemy?.id] !== 0) {
+      addLog("info", `The ${nextEnemy?.name} blocks your path!`);
     }
     setCurrentRoomId(roomId);
     setVisitedRoomIds((prev) => prev.includes(roomId) ? prev : [...prev, roomId]);
   }
 
   function handlePickUp(item) {
-    if (item === "old_key" && enemyHealths[SEMIFINAL_ENEMY_ID] !== 0) {
-      addLog("info", "Defeat the Skeleton Guard first!")
-      return;
+    const currentItem = items[item];
+    if (currentItem.type === "key" && enemyHealths[currentRoom.enemyId] !== 0) {
+      return addLog("items", `Defeat the ${enemies[currentRoom.enemyId].name} to obtain the ${currentItem.name}`);
     }
     setInventory((prev) => prev.includes(item) ? prev : [...prev, item]);
-    if (item === "rusty_sword") addLog("info", "Picked up rusty sword.");
-    if (item === "wooden_shield") addLog("info", "Picked up wooden shield.");
-    if (item === "health_potion") addLog("info", "Picked up potion.");
-    if (item === "old_key") addLog("info", "East gate has been unlocked!")
+    addLog("items", items[item].description);
   }
 
   function handlePlayerAttack() {
@@ -83,14 +105,16 @@ function App() {
 
     setEnemyHealths((prev) => ({ ...prev, [enemy.id]: newHealth }));
     addLog("player", getPlayerHitMessage(enemy.name, damage));
-    handleEnemyAttack();
-
-    if (newHealth === 0) {
-      addLog("info", getEnemyDefeatedMessage(enemy.name));
-    }
+    setTimeout(() => {
+      handleEnemyAttack();
+      if (newHealth === 0) {
+        addLog("info", getEnemyDefeatedMessage(enemy.name));
+      }
+    }, 100)
   }
 
   function handleEnemyAttack() {
+    flashPlayer();
     const damage = calculateDamage(enemy, { defense });
     const newHealth = applyDamage(playerHealth, damage);
 
@@ -124,6 +148,13 @@ function App() {
     setIsEnemyHit(true);
     setTimeout(() => {
       setIsEnemyHit(false);
+    }, 300)
+  }
+
+  function flashPlayer() {
+    setIsPLayerHit(true);
+    setTimeout(() => {
+      setIsPLayerHit(false);
     }, 300)
   }
 
@@ -185,13 +216,16 @@ function App() {
           <CombatLog entries={combatLog} />
 
           <div className="w-full max-w-md">
-            <PlayerStats name={name} health={playerHealth} maxHealth={maxHealth} attack={attack} defense={defense} />
+            <PlayerStats name={name} health={playerHealth} maxHealth={maxHealth} attack={attack} defense={defense} isHit={isPlayerHit} />
           </div>
 
         </section>
 
         <aside className="flex flex-col gap-6">
-          <MiniMap visitedRoomIds={visitedRoomIds} currentRoomId={currentRoomId} />
+          <div className="flex flex-wrap items-center justify-between gap-4">
+            <MiniMap visitedRoomIds={visitedRoomIds} currentRoomId={currentRoomId} floor={currentRoom.floor} />
+            <Compass availableDirections={availableDirections} />
+          </div>
           <Inventory itemIds={heldItems} onUse={handleUseItem} openHowToPlay={handleSeenTutorial} newGame={newGame} />
           <RoomItems itemIds={roomItemIds} onPickUp={handlePickUp} />
         </aside>

@@ -1,12 +1,11 @@
-export function getMapSize(rooms) {
-  const roomList = Object.values(rooms);
+export function getMapSize(roomList) {
 
-  const columns = Math.max(roomList.map((room) => {
-    return room.x;
-  })) + 1;
-  const rows = Math.max(roomList.map((room) => {
-    return room.y;
-  })) + 1;
+  const columns = Math.max(...roomList.map((room) => room.x)) + 1;
+  const rows = Math.max(...roomList.map((room) => room.y)) + 1;
 
   return { columns, rows };
+}
+
+export function getRoomsOnFloor(rooms, floor) {
+  return Object.values(rooms).filter((room) => room.floor === floor);
 }

@@ -33,7 +33,7 @@ export function Inventory({ itemIds, onUse, openHowToPlay, newGame }) {
                             <button
                                 type="button"
                                 onClick={() => onUse(items[id].id)}
-                                className="rounded bg-emerald-400 px-2 py-1 text-xs font-semibold hover:bg-emerald-500"
+                                className="rounded bg-emerald-400 px-4 py-2 text-xs font-semibold hover:bg-emerald-500"
                             >
                                 Use
                             </button>

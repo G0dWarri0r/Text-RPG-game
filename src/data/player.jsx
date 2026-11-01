@@ -1,6 +1,6 @@
 export const initialPlayer = {
   name: "Hero",
-  maxHealth: 50,
-  baseAttack: 3,
-  baseDefense: 0,
+  maxHealth: 70,
+  baseAttack: 4,
+  baseDefense: 1,
 };

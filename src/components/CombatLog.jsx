@@ -2,6 +2,7 @@ const TYPE_STYLES = {
   player: "text-emerald-400",
   enemy: "text-red-400",
   info: "text-amber-300",
+  items: "text-blue-400",
 };
 
 export function CombatLog({ entries }) {
