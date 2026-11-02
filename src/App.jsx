@@ -186,20 +186,20 @@ function App() {
   }
 
   return (
-    <main className="min-h-screen p-6 text-zinc-100">
+    <main className="h-dvh overflow-hidden p-3 text-zinc-100 md:p-6">
       <Background theme={currentRoomId} />
       {isTutorialOpen && <TutorialModal onClose={handleSeenTutorial} />}
-      <div className="mx-auto grid min-h-[calc(100vh-3rem)] max-w-5xl grid-cols-1 gap-6 md:grid-cols-[1fr_18rem]">
+      <div className="mx-auto grid h-full max-w-5xl grid-cols-[1fr_9rem] grid-rows-[minmax(0,1fr)] gap-3 md:grid-cols-[1fr_18rem] md:gap-6">
 
-        <section className="flex flex-col items-center gap-6">
+        <section className="flex min-h-0 flex-col items-center gap-4 overflow-y-auto md:gap-6">
           <header className="text-center">
-            <h1 className="text-3xl font-bold">{currentRoom.name}</h1>
+            <h1 className="text-2xl font-bold md:text-3xl">{currentRoom.name}</h1>
             <p className="mt-2 max-w-prose text-zinc-300">{currentRoom.description}</p>
           </header>
 
           {enemy && <EnemyPanel enemy={enemy} health={enemyHealth} isDefeated={isEnemyDefeated} onAttack={handlePlayerAttack} isHit={isEnemyHit} />}
 
-          <div className="flex flex-1 items-center justify-center gap-3">
+          <div className="flex flex-1 flex-wrap items-center justify-center gap-2 md:gap-3">
             {
               Object.entries(currentRoom.exits).map(([direction, roomId]) => {
                 return (
@@ -221,7 +221,7 @@ function App() {
 
         </section>
 
-        <aside className="flex flex-col gap-6">
+        <aside className="flex min-h-0 flex-col gap-4 overflow-y-auto md:gap-6">
           <div className="flex flex-wrap items-center justify-between gap-4">
             <MiniMap visitedRoomIds={visitedRoomIds} currentRoomId={currentRoomId} floor={currentRoom.floor} />
             <Compass availableDirections={availableDirections} />

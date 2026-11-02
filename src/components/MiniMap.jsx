@@ -16,10 +16,12 @@ export function MiniMap({ visitedRoomIds, currentRoomId, floor }) {
         <section className="mt-8">
             <h2 className="mb-4 text-zinc-400 font-semibold">Map - Floor {floor}</h2>
             <div
-                className="grid gap-2"
+                className="grid gap-1 [--cell:2.5rem] md:gap-2 md:[--cell:4.5rem]"
                 style={{
-                    gridTemplateColumns: `repeat(${columns}, 4rem)`,
-                    gridTemplateRows: `repeat(${rows}, 4rem)`, }}>
+                    gridTemplateColumns: `repeat(${columns}, var(--cell))`,
+                    gridTemplateRows: `repeat(${rows}, var(--cell))`,
+                }}>
+
                 {
                     Object.values(roomList).map((room) => {
                         const isCurrent = (room.id === currentRoomId ? true : false);
@@ -30,7 +32,14 @@ export function MiniMap({ visitedRoomIds, currentRoomId, floor }) {
                                 title={room.name}
                                 style={{ gridColumnStart: room.x + 1, gridRowStart: room.y + 1 }}
                                 className={`flex items-center justify-center text-center rounded border text-xs font-semibold ${getSquareStyle(isCurrent, isVisited)}`} >
-                                {isVisited ? room.name : "?"}
+                                {isVisited ? (
+                                    <>
+                                        <span className="md:hidden">{room.name[0]}</span>
+                                        <span className="hidden md:inline">{room.name}</span>
+                                    </>
+                                ) : (
+                                    "?"
+                                )}
                             </div>
                         )
                     })
