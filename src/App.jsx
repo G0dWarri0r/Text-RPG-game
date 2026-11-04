@@ -34,13 +34,12 @@ function App() {
   const [isPlayerHit, setIsPLayerHit] = useState(false);
   const [usedItemIds, setusedItemIds] = useState(savedGame?.usedItemIds ?? []);
   const [isTutorialOpen, setIsTutorialOpen] = useState(() => !hasSeenTutorial())
-  const [hitPlayer, setHitPlayer] = useState(false);
   const currentRoom = rooms[currentRoomId];
   const roomItemIds = currentRoom.itemIds.filter((id) => !inventory.includes(id));
   const heldItems = inventory.filter((id) => !usedItemIds.includes(id));
   const availableDirections = Object.keys(currentRoom.exits);
   const { name, maxHealth } = initialPlayer;
-  const { attack, defense } = getPlayerStats(inventory);
+  const { attack, defense } = getPlayerStats(heldItems);
   const enemy = currentRoom.enemyId ? enemies[currentRoom.enemyId] : null;
   const [enemyHealths, setEnemyHealths] = useState(savedGame?.enemyHealths ?? {});
   const enemyHealth = enemy ? (enemyHealths[enemy.id] ?? enemy.maxHealth) : null;
@@ -89,6 +88,25 @@ function App() {
 
   function handlePickUp(item) {
     const currentItem = items[item];
+
+    if (currentItem.type === "weapon") {
+      inventory.map((itemId) => {
+        const itemType = items[itemId].type;
+        if (itemType === "weapon") {
+          setusedItemIds((prev) => [...prev, itemId]);
+        }
+      });
+    }
+
+    if (currentItem.type === "armor") {
+      inventory.map((itemId) => {
+        const itemType = items[itemId].type;
+        if (itemType === "armor") {
+          setusedItemIds((prev) => [...prev, itemId]);
+        }
+      });
+    }
+
     if (currentItem.type === "key" && enemyHealths[currentRoom.enemyId] !== 0) {
       return addLog("items", `Defeat the ${enemies[currentRoom.enemyId].name} to obtain the ${currentItem.name}`);
     }
@@ -140,7 +158,7 @@ function App() {
 
     const newHealth = applyHealing(playerHealth, item.heal, initialPlayer.maxHealth);
     setPlayerHealth(newHealth);
-    setusedItemIds((prev) => [...prev, item.id]);
+    setusedItemIds((prev) => [...prev, itemId]);
     addLog("info", `You drink the ${item.name} and recover ${newHealth - playerHealth} HP.`);
   }
 

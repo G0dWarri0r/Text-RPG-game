@@ -13,7 +13,7 @@ export function TutorialModal({ onClose }) {
           <li>
             <span className="font-semibold text-zinc-100">Collect.</span> Pick up
             items in each room. Weapons raise your Attack and armor raises your
-            Defense.
+            Defense, only one Weapon and Armor can be used at a time.
           </li>
           <li>
             <span className="font-semibold text-zinc-100">Fight.</span> Enemies
@@ -30,7 +30,7 @@ export function TutorialModal({ onClose }) {
           </li>
           <li>
             <span className="font-semibold text-zinc-100">Goal.</span> Descend into the flooded depths 
-            and defeat the ruler othe drowned halls.
+            and defeat the ruler of the drowned halls.
           </li>
         </ul>
 

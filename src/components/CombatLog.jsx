@@ -15,7 +15,7 @@ export function CombatLog({ entries }) {
       </h2>
 
       <ul className="space-y-1 text-sm">
-        {entries.slice(-6).map((entry) => (
+        {entries.slice(-5).map((entry) => (
           <li key={entry.id} className={TYPE_STYLES[entry.type]}>
             {entry.text}
           </li>

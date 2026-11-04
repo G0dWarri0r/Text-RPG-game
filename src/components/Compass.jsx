@@ -1,8 +1,8 @@
 const DIRECTIONS = [
-    { name: "north", label: "N", position: "col-start-2 row-start-1" },
-    { name: "west", label: "W", position: "col-start-1 row-start-2" },
-    { name: "east", label: "E", position: "col-start-3 row-start-2" },
-    { name: "south", label: "S", position: "col-start-2 row-start-3" },
+    { name: "forward", label: "F", position: "col-start-2 row-start-1" },
+    { name: "left", label: "L", position: "col-start-1 row-start-2" },
+    { name: "right", label: "R", position: "col-start-3 row-start-2" },
+    { name: "back", label: "B", position: "col-start-2 row-start-3" },
 ];
 
 const STAIRS = [

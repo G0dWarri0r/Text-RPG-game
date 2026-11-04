@@ -39,7 +39,7 @@ export const items = {
     name: "Iron Shield",
     description: "Heavy, but it turns blades aside.",
     type: "armor",
-    defense: 1,
+    defense: 2,
   },
   silver_key: {
     id: "silver_key",
